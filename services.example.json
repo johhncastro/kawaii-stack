@@ -1,0 +1,67 @@
+{
+  "services": [
+    {
+      "id": "cf-main",
+      "name": "cf:main",
+      "type": "tunnel",
+      "enabled": true,
+      "cwd": "C:/",
+      "command": "C:/cloudflared.exe",
+      "args": ["--config", "C:/Users/YOU/.cloudflared/config.yml", "tunnel", "run"],
+      "health": { "mode": "process", "readyPattern": "Registered tunnel connection", "healthyAfterMs": 10000 }
+    },
+    {
+      "id": "my-site",
+      "name": "my-site.example",
+      "type": "web",
+      "enabled": true,
+      "cwd": "C:/sites/my-site/.next/standalone",
+      "command": "node",
+      "args": ["server.js"],
+      "env": { "NODE_ENV": "production", "HOSTNAME": "0.0.0.0", "PORT": "3000" },
+      "port": 3000,
+      "health": { "mode": "http", "intervalMs": 10000, "timeoutMs": 3000, "startupTimeoutMs": 60000, "failsBeforeRestart": 3 },
+      "build": {
+        "mode": "next-standalone",
+        "projectDir": "C:/sites/my-site",
+        "srcPaths": ["src", "public", "package.json", "next.config.mjs", "tailwind.config.ts", "postcss.config.mjs", "tsconfig.json"],
+        "marker": ".next/BUILD_ID",
+        "requires": [".next/standalone/server.js"],
+        "buildCmd": "npm run build -- --no-lint",
+        "postBuildCopies": [
+          [".next/static", ".next/standalone/.next/static"],
+          ["public", ".next/standalone/public"]
+        ]
+      }
+    },
+    {
+      "id": "other-site",
+      "name": "other-site.example",
+      "type": "web",
+      "enabled": true,
+      "cwd": "C:/sites/other-site",
+      "command": "node",
+      "args": ["node_modules/next/dist/bin/next", "start", "-p", "3001"],
+      "port": 3001,
+      "health": { "mode": "http", "intervalMs": 10000, "timeoutMs": 3000, "startupTimeoutMs": 60000, "failsBeforeRestart": 3 }
+    },
+    {
+      "id": "my-bot",
+      "name": "my-bot",
+      "type": "bot",
+      "enabled": true,
+      "cwd": "C:/bots/my-bot",
+      "command": "node",
+      "args": ["dist/index.js"],
+      "health": { "mode": "process", "healthyAfterMs": 15000 },
+      "build": {
+        "mode": "tsc",
+        "projectDir": "C:/bots/my-bot",
+        "srcPaths": ["src", "package.json", "tsconfig.json"],
+        "marker": "dist/index.js",
+        "requires": ["dist/index.js"],
+        "buildCmd": "npm run build"
+      }
+    }
+  ]
+}

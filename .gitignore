@@ -1,0 +1,12 @@
+# runtime state written by the daemon
+logs/
+run/
+
+# local editor / OS noise
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+
+# machine-specific service config (copy services.example.json -> services.json)
+services.json

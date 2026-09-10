@@ -1,0 +1,7 @@
+{
+  "name": "kawaii-stack",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Supervisor daemon + TUI dashboard for the cloudflare tunnel and web apps on ASUNA"
+}
